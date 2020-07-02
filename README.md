@@ -18,15 +18,15 @@ In addition to those libraries, make sure that you have the ESP core files insta
 
 ## Installation
 ### 1. MQTT Broker
-Download and install an MQTT broker, such as mosquitto or hiveMQ. 
+Download and install an MQTT broker that supports websocket connections, such as mosquitto or hiveMQ. 
 
-Next create login credentials for both yourself and your devices.
+Create login credentials for both yourself and your devices.
 
-The dashboard connects to the broker via websockets, but this is generally not enabled by default. As such, make sure that your broker supports websocket connections and enable them. 
+Enable websockets in your broker configuration, this is required for the dashboard to connect to the broker.
 
-NOTE: If you deploy the dashboard on an HTTPS server most webbrowsers will require you make use of websockets with SSL, this means your MQTT broker needs an SSL certificate and be configured accordingly. 
+NOTE: If you deploy the dashboard on an HTTPS server you must also use websockets with SSL, this means your MQTT broker needs an SSL certificate and be configured accordingly. 
 
-More info on how to do this can be found on their respective websites:
+More info on how to install and setup your MQTT server can be found on their respective websites:
 * [Mosquitto](https://mosquitto.org/)
 * [HiveMQ](https://www.hivemq.com/)
 
@@ -49,6 +49,9 @@ BH1750 | Light intensity sensor (Input) | 4 & 5 (I2C)
 Button | Input | 13
 RF Transmitter | Output | 2
 LED | Output | 12
+
+Example with D1 Mini:
+![D1 Mini](https://i.imgur.com/rtS2qYB.png)
 
 
 ### 4. Install Device Firmware
