@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="512x512"  href="favicon/android-icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Home-ESP Dashboard</title>
+
+    <!-- Custom stylesheet based on Bootstrap V4.3.1 -->
+    <link href="css/home-esp.css" rel="stylesheet">
+    
+    <!-- Custom fonts-->
+    <link href="css/fontawesome.min.css" rel="stylesheet">
+    <link href="css/nunito.css" rel="stylesheet">
+    
+    <!-- Bootstrap JS & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!-- Sparkline -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js"></script>
+    <!-- MQTT Websocket -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.js"></script>
+    <!-- Dashboard Logic -->
+    <script type="text/javascript" src="js/home-esp.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Login Wrapper -->
+    <div id="loginWrapper">
+      <div class="container">
+        <div class="row signin-center">
+          <div class="col-sm-9 col-md-7 col-lg-6 col-xl-5 mx-auto">
+            <div class="card card-custom my-3">
+              <div class="card-body">
+                <!-- Login Brand -->
+                <div class="brand card-title text-center text-gray-900"><i class="fas fa-microchip rotate-n-15 mr-2"></i>Home-ESP</div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="form-signin" onsubmit="initiateConnection(document.getElementById('loginUser').value, 
+                                                                       document.getElementById('loginPass').value, 
+                                                                       document.getElementById('loginHost').value, 
+                                                                       document.getElementById('loginPort').value,
+                                                                       document.getElementById('loginSSL').checked,
+                                                                       document.getElementById('loginRemember').checked);return false;">
+                  <div class="form-label-group">
+                    <input id="loginUser" type="text" class="form-control" placeholder="Username" autocomplete="username" required autofocus>
+                    <label for="loginUser">Username</label>
+                  </div>
+                  <div class="form-label-group">
+                    <input id="loginPass" type="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
+                    <label for="loginPass">Password</label>
+                  </div>
+                  </br>
+                  <div class="form-label-group">
+                    <input id="loginHost" type="text" class="form-control" placeholder="Hostname" required>
+                    <label for="loginHost">Hostname</label>
+                  </div>
+                  <div class="form-label-group">
+                      <input id="loginPort" type="number" class="form-control" min=1 max=65535 value=9883 required>
+                      <label for="loginPort">Port</label>
+                  </div>
+                  <hr class="my-4">
+                  <div class="row mb-3">
+                    <div class="custom-control custom-checkbox ml-md-5 col-md-auto text-center">
+                      <input id="loginSSL" type="checkbox" class="custom-control-input">
+                      <label class="custom-control-label" for="loginSSL">Use SSL</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mr-md-5 ml-md-auto mx-auto">
+                      <input id="loginRemember" type="checkbox" class="custom-control-input">
+                      <label class="custom-control-label" for="loginRemember">Remember Host</label>
+                    </div>
+                  </div>
+                  <button id="loginButton" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">
+                    <i class="fa fa-sign-in-alt mr-2" aria-hidden="true"></i>Connect
+                  </button>
+                </form>
+                <!-- End of Login Form -->
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of Login Wrapper -->
+        
+    <!-- Dashboard Wrapper -->
+    <div id="dashboardWrapper" class="d-flex flex-column hidden">
+
+      <!-- Dashboard Content -->
+      <div id="dashboardContent">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-gradient-primary-left topbar mb-4 static-top shadow-lg">
+          <!-- Brand -->
+          <div class="brand d-flex align-items-center justify-content-center">
+            <div class="brand-icon rotate-n-15">
+              <i class="fas fa-microchip"></i>
+            </div>
+            <div class="ml-3">Home-ESP</div>
+          </div>
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a id="installButton" class="nav-link hidden" href="#" role="button">
+                <i class="fas fa-download fa-fw text-gray-100"></i>
+                <span class="badge badge-danger badge-counter">!</span>
+              </a>
+            </li>
+
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a id="alertsDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw text-gray-100"></i>
+                <!-- Counter - Alerts -->
+                <span id="alertBadge" class="badge badge-danger badge-counter"></span>
+              </a>
+              <!-- Dropdown - Alerts -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">Alerts Center</h6>
+                <div id="alertBody" class="alert-body"></div>
+                <button id="dropDownClearAlerts"class="dropdown-item text-center small text-gray-600 bg-light">Clear all alerts</button>
+              </div>
+            </li>
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a id="userDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span id="navbarName" class="mr-2 d-none d-md-inline text-gray-100 font-weight-bold small"></span>
+                <i class="fas fa-user-circle fa-2x text-gray-100"></i>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <button id="dropDownDiscovery" class="dropdown-item discovery-refresh" data-toggle="modal" data-target="#discoveryModal">
+                  <i class="fas fa-search fa-sm fa-fw mr-2 text-gray-800"></i>Device discovery tool
+                </button>
+                <button id="dropDownVerboseEnable" class="dropdown-item">
+                  <i class="fas fa-file-alt fa-sm fa-fw mr-2 text-gray-800"></i>Enable verbose logging
+                </button>
+                <button id="dropDownVerboseDisable" class="dropdown-item hidden">
+                  <i class="far fa-file-alt fa-sm fa-fw mr-2 text-gray-800"></i>Disable verbose logging
+                </button>
+                <div class="dropdown-divider"></div>
+                <button id="dropDownLogout" class="dropdown-item">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-800"></i>Logout
+                </button>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Device Discovery Modal -->
+        <div id="discoveryModal" class="modal fade" role="dialog">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title font-weight-bold mr-auto text-primary">Device Discovery Tool</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">
+                <form id="discoveryForm" onsubmit="addSelectedDevices();return false;">
+                  <h6 class="text-gray-700 mb-4">The device discovery tool allows you to quickly find and add compatible HomeESP devices. Simply select one or more devices and click add.</h6>
+                  <h6 class="font-weight-bold text-gray-700">Compatible HomeESP Devices:</h6>
+                  <div class="row align-items-center">
+                    <div class="col-md-11 mb-2 pr-md-2px">
+                      <select id="discoveryDevices" class="form-control w-100 h-md-110px brr-md-0" multiple></select>
+                    </div>
+                    <div class="col-md-1 d-none d-md-inline-block mb-2 mln-15px">
+                      <button type="button" class="btn btn-success h-md-110px brl-0 discovery-refresh">
+                        <i class="fas fa-sync fa-sm"></i>
+                      </button>
+                    </div>
+                    <div class="col-sm-12 d-inline-block d-md-none w-100">
+                      <button type="button" class="btn btn-success w-100 discovery-refresh">
+                        <i class="fas fa-sync fa-sm mr-2"></i>Refresh
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button id="discoveryAddButton"  type="submit" class="btn btn-primary mx-auto" form="discoveryForm">
+                  <i class="fas fa-plus fa-sm mr-2"></i>Add Selected Devices
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of Device Discovery Modal -->
+        
+        <!-- Container -->
+        <div class="container-fluid">
+          <!-- Page Heading -->
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0 ml-1 font-weight-bold text-gray-800">Dashboard</h3>
+            <form id="addDeviceForm" onsubmit="addDevice(document.getElementById('deviceName').value);return false;"> 
+              <div class="input-group pl-2">
+                <input id="deviceName" type="text" class="form-control" placeholder="Device Name" maxlength=32 pattern="[a-zA-Z0-9-_:.]+" 
+                        title="May only contain letters, numbers, periods, underscores and hyphens">
+                <div class="input-group-append">
+                  <button class="btn btn-primary" form="addDeviceForm" type="submit">
+                      <i class="fas fa-plus fa-sm mr-md-2"></i><div class="d-none d-md-inline-block">Add device</div>
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+            
+          <!-- Dashboard Body -->
+          <div id="dashboardBody" class="row">
+
+          </div>
+          <!-- End of Dashboard body -->
+
+        </div>
+        <!-- Emd of Container -->
+      </div>
+      <!-- End of Dashboard Content -->
+      
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white border-top shadow">
+        <div class="container my-auto text-center">
+          <div class="row">
+            <div class="col-lg-6 col-md-12 text-gray-800 mb-2 mt-2"><b>Last Communication:  </b><small id="lastContactLabel"></small></div>
+            <div class="col-lg-6 col-md-12 text-gray-800 mb-2 mt-2"><b>Connection Status: </b><small id="statusLabel"></small></div>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Dashboard Wrapper -->
+
+    <!-- Device Section -->
+    <template id="deviceSectionTemplate">
+      <div id="templateDeviceSection" class="col-xl-12">
+
+        <!-- Configuration Modal -->
+        <div id="templateDeviceModal" class="modal fade" role="dialog">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title font-weight-bold mr-auto text-primary">templateDevice Configuration</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+              </div>
+              <div class="modal-body">                                       
+                <h5 class="font-weight-bold text-gray-700">Parameter Settings</h5>
+                <div class="dropdown-divider"></div>
+                <form id="templateDeviceConfigAddParameterForm" onsubmit="addParameterToConfig('templateDevice', 
+                                                                                               document.getElementById('templateDeviceConfigAddParameter').value);
+                                                                                               return false;">
+                  <h6 class="font-weight-bold text-gray-700">Add Device Parameter:</h6>
+                  <div class="row align-items-center mb-3">
+                    <div class="col-md-12 input-group mb-2">
+                      <select id="templateDeviceConfigAddParameter" class="form-control" required>
+                      </select>
+                      <div class="input-group-append">
+                        <button id="templateDeviceConfigAddParameterButton" type="submit" class="btn btn-primary w-100" form="templateDeviceConfigAddParameterForm">
+                          <i class="fas fa-plus fa-sm"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <h6 class="font-weight-bold text-gray-700">Device Parameters:</h6>
+                <div class="row align-items-center mb-3">
+                  <div class="col-md-11 mb-2 pr-md-2px">
+                    <select id="templateDeviceConfigParameters" class="form-control w-100 h-md-80px brr-md-0" multiple></select>
+                  </div>
+                  <div class="col-md-1 d-none d-md-inline-block mb-2 mln-15px">
+                    <button type="button" class="btn btn-danger h-md-80px brl-0" onclick="removeSelectedParameters('templateDevice')">
+                      <i class="fas fa-trash fa-sm"></i>
+                    </button>
+                  </div>
+                  <div class="col-sm-12 d-inline-block d-md-none w-100">
+                    <button type="button" class="btn btn-danger w-100" onclick="removeSelectedParameters('templateDevice')">
+                      <i class="fas fa-trash fa-sm mr-2"></i>Remove Selection
+                    </button>
+                  </div>
+                </div>
+                <form id="templateDeviceConfigForm" onsubmit="configureDevice('templateDevice', 
+                                                                              document.getElementById('templateDeviceConfigTempMin').value,
+                                                                              document.getElementById('templateDeviceConfigTempMax').value,
+                                                                              document.getElementById('templateDeviceConfigHmdtyMin').value,
+                                                                              document.getElementById('templateDeviceConfigHmdtyMax').value,
+                                                                              document.getElementById('templateDeviceConfigLightSensMin').value,
+                                                                              document.getElementById('templateDeviceConfigLightSensMax').value,
+                                                                              document.getElementById('templateDeviceConfigKakuAddress').value);return false;">
+                  <div class="row align-items-center">
+                    <div class="col-md-5 mt-2">
+                      <h6 class="font-weight-bold text-gray-700">Temperature Thresholds: </h6>
+                    </div>
+                    <div class="input-group col-md-7">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Min</span>
+                      </div>
+                      <input id="templateDeviceConfigTempMin" type="number" class="form-control" min=-100 max=100 required>
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Max</span>
+                      </div>
+                      <input id="templateDeviceConfigTempMax" type="number" class="form-control" min=-100 max=100 required>
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row align-items-center">
+                    <div class="col-md-5 mt-2">
+                      <h6 class="font-weight-bold text-gray-700">Humidity Thresholds:</h6>
+                    </div>
+                    <div class="input-group col-md-7">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Min</span>
+                      </div>
+                      <input id="templateDeviceConfigHmdtyMin" type="number" class="form-control" min=0 max=100 required>
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Max</span>
+                      </div>
+                      <input id="templateDeviceConfigHmdtyMax" type="number" class="form-control" min=0 max=100 required>
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row align-items-center">
+                    <div class="col-md-5 mt-2">
+                      <h6 class="font-weight-bold text-gray-700">Light Sensor Thresholds:</h6>
+                    </div>
+                    <div class="input-group col-md-7">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Min</span>
+                      </div>
+                      <input id="templateDeviceConfigLightSensMin" type="number" class="form-control" min=0 max=65535 required>
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">Max</span>
+                      </div>
+                      <input id="templateDeviceConfigLightSensMax" type="number" class="form-control" min=0 max=65535 required>
+                    </div>
+                  </div>
+                  <br/>
+                  <h5 class="font-weight-bold text-gray-700">Click-On-Click-Off Settings</h5>
+                  <div class="dropdown-divider"></div>
+                  <div class="row align-items-center">
+                    <div class="col-md-5 mt-2">
+                      <h6 class="font-weight-bold text-gray-700">Click-On-Click-Off Address:</h6>
+                    </div>
+                    <div class="col-md-7">
+                      <input id="templateDeviceConfigKakuAddress" type="number" class="form-control" min=1 max=67108862 required>
+                    </div>
+                  </div>
+                </form>
+                <br/>
+                <form id="templateDeviceConfigAddUnitForm" onsubmit="addKakuToConfig('templateDevice', 
+                                                                                     document.getElementById('templateDeviceConfigKakuUnitNr').value, 
+                                                                                     document.getElementById('templateDeviceConfigKakuUnitName').value);
+                                                                                     return false;">
+                  <h6 class="font-weight-bold text-gray-700">Add Click-On-Click-Off Unit:</h6>
+                  <div class="row align-items-center">
+                    <div class="col-md-12 input-group mb-2">
+                      <input id="templateDeviceConfigKakuUnitNr" type="number" class="form-control mw-33" placeholder="Unit Nr" min=0 max=99 
+                            onKeyUp="if(this.value>99){this.value='99';}else if(this.value<0){this.value='0';}" required>
+                      <input id="templateDeviceConfigKakuUnitName" type="text" class="form-control" placeholder="Unit Name" maxlength="16" 
+                            pattern="[a-zA-Z0-9-_:. ]+" title="May only contain letters, numbers, spaces, underscores and hyphens" required>
+                      <div class="input-group-append">
+                        <button id="templateDeviceConfigAddKakuUnitButton" type="submit" class="btn btn-primary w-100" form="templateDeviceConfigAddUnitForm">
+                          <i class="fas fa-plus fa-sm"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                <br/>
+                <h6 class="font-weight-bold text-gray-700">Click-On-Click-Off Units:</h6>
+                <div class="row align-items-center">
+                  <div class="col-md-11 mb-2 pr-md-2px">
+                    <select id="templateDeviceConfigKakuUnits" class="form-control w-100 h-md-80px brr-md-0" multiple></select>
+                  </div>
+                  <div class="col-md-1 d-none d-md-inline-block mb-2 mln-15px">
+                    <button type="button" class="btn btn-danger h-md-80px brl-0" onclick="removeSelectedKakuUnits('templateDevice')">
+                      <i class="fas fa-trash fa-sm"></i>
+                    </button>
+                  </div>
+                  <div class="col-sm-12 d-inline-block d-md-none w-100">
+                    <button type="button" class="btn btn-danger w-100" onclick="removeSelectedKakuUnits('templateDevice')">
+                      <i class="fas fa-trash fa-sm mr-2"></i>Remove Selection
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button id="templateDeviceConfigFormButton"  type="submit" class="btn btn-primary ml-auto mr-4" form="templateDeviceConfigForm">
+                  <i class="fas fa-save fa-sm mr-2"></i>Save <div class="d-md-inline-block d-none"> Configuration</div>
+                </button>
+                <button id="templateDeviceConfigFormButton"  class="btn btn-danger mr-auto" onclick="devices['templateDevice'].configRead = false;publishMessage('templateDevice', '/config/get');">
+                  <i class="fas fa-undo fa-sm mr-2"></i>Undo <div class="d-md-inline-block d-none"> Changes</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of Configuration Modal -->
+
+        <div class="card shadow mb-4">
+          <!-- Card Header - Dropdown -->
+          <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h5 class="m-0 font-weight-bold text-primary">Device Name: templateDevice</h5>
+            <div class="dropdown no-arrow">
+              <a id="dropdownMenuLink" class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-500"></i>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                <div class="dropdown-header">templateDevice settings:</div>
+                <button id="templateDeviceRestartButton" class="dropdown-item" onclick="publishMessage('templateDevice', '/restart')" disabled>
+                  <i class="fas fa-power-off fa-sm fa-fw mr-2 text-gray-800"></i>Restart device
+                </button>
+                <button id="templateDeviceConfigureButton" class="dropdown-item" data-toggle="modal" data-target="#templateDeviceModal" disabled>
+                  <i class="fas fa-tools fa-sm fa-fw mr-2 text-gray-800"></i>Configure device
+                </button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item" onclick="removeDevice('templateDevice')">
+                  <i class="fas fa-trash fa-sm fa-fw mr-2 text-gray-800"></i>Remove device
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- Card Body -->
+          <div class="card-body">
+            <!-- Content Row -->
+            <div id="templateDeviceCardBody" class="row">
+
+              <!-- Connection Card -->
+              <div class="col-xxl-4 col-xl-6 my-2">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <i class="fas fa-wifi fa-3x text-gray-400 mr-3"></i>
+                      <div class="col-auto mr-2">
+                        <div class="text-s font-weight-bold text-primary text-uppercase">
+                          <div class="d-none d-sm-inline-block">Connection Status</div>
+                          <div class="d-inline-block d-sm-none">Connection</div>
+                        </div>
+                        <div id="templateDeviceUptimeLabel" class="text-xs font-weight-bold text-secondary text-uppercase"></div>
+                      </div>
+                      <div class="ml-auto">
+                        <h3><span id="templateDeviceConnectionLabel" class="badge">Unknown</span></h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <!-- End of Device Section -->
+
+    <!-- Button Card -->
+    <template id="cardTemplate">
+      <div id="templateButtonCard" class="col-xxl-4 col-xl-6 my-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <i id="templateDevicetemplateParamCardIcon" class="fas fa-question fa-3x text-gray-400 mr-3"></i>
+              <div class="col-auto mr-2">
+                <div id="templateDevicetemplateParamTitle" class="text-s font-weight-bold text-primary text-uppercase">templateName</div>
+                <div id="templateDevicetemplateParamState" class="text-xs font-weight-bold text-secondary text-uppercase">(no value received)</div>
+              </div>
+              <div class="ml-auto">
+                <h3>
+                  <span id="templateDevicetemplateParamLabel" class="badge">Unknown</span>
+                  <button id="templateDevicetemplateParamButton" type="button" class="btn btn-sm btn-primary" 
+                          onclick="publishMessage('templateDevice', '/templateTopic/toggle')">
+                    <i id="templateDevicetemplateParamToggle" class="fas fa-toggle-off text-white"></i>
+                  </button>
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Spark Card -->
+    <template id="sparkCardTemplate">
+      <div id="templateSparkCard" class="col-xxl-4 col-xl-6 my-2">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div id="templateDevicetemplateParamCardBody" class="row no-gutters align-items-center">
+              <i id="templateDevicetemplateParamCardIcon" class="fas fa-question fa-3x text-gray-400 mr-3"></i>
+              <div id="templateDevicetemplateParamCardTitle" class="col-auto mr-2">
+                <div class="text-s font-weight-bold text-primary text-uppercase">templateName</div>
+                <div id="templateDevicetemplateParamRaw" class="text-xs font-weight-bold text-secondary text-uppercase">(no value received)</div>
+              </div>
+              <div class="d-none d-md-inline-block ml-auto">
+                <span class="templateDevicetemplateParamSparkline"></span>
+              </div>
+              <div id="templateDevicetemplateParamCardBadge" class="ml-auto ml-md-3">
+                <h3><span id="templateDevicetemplateParamLabel" class="badge">Unknown</span></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="alertItemTemplate">
+      <!-- Alert Item -->
+      <a id="templateAlertItem" class="d-flex align-items-center" data-type="template">
+        <span id="templateAlertItemIcon" class="font-weight-bold mr-2"></span>
+        <div>
+          <div id="templateAlertItemTime" class="small text-gray-600"></div>
+          <span id="templateAlertItemContent" class="font-weight-bold"></span>
+        </div>
+      </a>
+    </template>
+
+  </body>
+</html>
