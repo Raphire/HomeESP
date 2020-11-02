@@ -20,9 +20,9 @@ In addition to those libraries, make sure that you have the ESP core files insta
 ### 1. MQTT Broker
 Download and install an MQTT broker that supports websocket connections, such as mosquitto or hiveMQ. 
 
-Create login credentials for both yourself and your devices.
+Create login credentials for both yourself (Which will be used to login to the dashboard) and your devices.
 
-Enable websockets in your broker configuration, this is required for the dashboard to connect to the broker.
+Enable websockets in your broker configuration, as this is required for the dashboard to connect to the broker.
 
 NOTE: If you deploy the dashboard on an HTTPS server you must also use websockets with SSL, this means your MQTT broker needs an SSL certificate and be configured accordingly. 
 
@@ -31,16 +31,16 @@ More info on how to install and setup your MQTT server can be found on their res
 * [HiveMQ](https://www.hivemq.com/)
 
 ### 2. Dashboard
-Click the "Clone or download" button above, next click "Download ZIP".
+Click the green download button above, next click "Download ZIP".
 
-**Local use:** <br>
+**Installation for use on local machine:** <br>
 Unzip the downloaded file and place the 'Dashboard' folder on your device, next open the index.html file inside to start.
 
-**Web deployment:** <br>
+**Installation for web deployment:** <br>
 Unzip the downloaded file and place the contents of the dashboard folder in the root of your webserver, next simply navigate to your IP address or domain.
 
 ### 3. Connect Everything to Device
-Connect all components to the ESP board. You can use [this webpage](https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/) as a pinout reference.
+Connect all components to the ESP board. You can use [this webpage](https://randomnerdtutorials.com/esp8266-pinout-reference-gpios/) as a pinout reference for your specific ESP board.
 
 Name | Type | Connected to GPIO
 ------------ | -------------  | -------------
@@ -52,7 +52,6 @@ LED | Output | 12
 
 Example with D1 Mini:
 ![D1 Mini](https://i.imgur.com/rtS2qYB.png)
-
 
 ### 4. Install Device Firmware
 Connect the ESP board to your computer.
@@ -66,11 +65,11 @@ Select the correct board variant from Arduino IDE -> Tools -> Board.
 Click Upload.
 
 ### 5. Device Setup
-Once the upload is complete the device, press the button that is connected to GPIO 13. The device will now enter a broadcast mode, which allows you to connect to your device directly via wifi. Look for any open network with the name HomeESP followed by 4 random numbers, and connect to it.
+Once the upload is complete, press the button that is connected to GPIO 13 of the device. The device will now enter a broadcast mode, which allows you to connect to your device directly via wifi. Look for any open network with the name "HomeESP" followed by 4 random numbers, and connect to it.
 
 Next, open your webbrowser and navigate to the device configuration page: [http://192.168.1.1/config](http://192.168.1.1/config).
 
-Lastly, enter the desired hostname, network info and MQTT broker details for your device and click save.
+Lastly, enter the desired hostname, network info and MQTT broker logindetails for your device and click save.
 
 Your device should now automatically restart, and connect to your network and MQTT broker. 
 
@@ -79,7 +78,9 @@ Open the dashboard and enter the login details that you created in step 1.
 
 Enter the hostname of your broker and the websocket port that you configured in step 1 and click login.
 
-Once you succesfully login you should be greeted with the discovery tool, this allows you to quickly add any devices that are currently connected to the MQTT broker, if your device does not show up right away try to click the green refresh button. Select all of the devices that you would like to add and click 'Add selected devices'.
+Once you succesfully login you should be greeted with the discovery tool, this allows you to quickly add any devices that are currently connected to the MQTT broker, if your device does not show up right away you can press the green refresh button. 
+
+Next, simply select all of the devices that you would like to add and click 'Add selected devices'.
 
 ## HomeESP Protocol (V2.1)
 The HomeESP dashboard and devices use the MQTT protocol (A lightweight publish/subscribe protocol) to communicate with one another. MQTT clients communicate by subscribing and publishing messages to specific topics, which may also contain a payload. All topics used by HomeESP are laid out in the table below.
