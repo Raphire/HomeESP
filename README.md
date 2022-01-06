@@ -1,6 +1,8 @@
 # HomeESP
 HomeESP is a simple home automation solution for the ESP8266, which allows you to monitor, control and configure compatible devices through a user friendly dashboard.
 
+This project is a proof-of-concept, as such, the sensors and actuators are not customizable in the dashboard. This project could however serve as a solid base for creating your own custom implementation to suit your own personal needs.
+
 ## Dependencies
 HomeESP requires the following libraries to be installed:
 * [ESPHelper](https://github.com/Raphire/ESPHelper) (Make sure to use my fork, as the original is not compatible with newer versions of ArduinoJSON)
@@ -44,10 +46,10 @@ Connect all components to the ESP board. You can use [this webpage](https://rand
 
 Name | Type | Connected to GPIO
 ------------ | -------------  | -------------
-DHT11/DHT22 | Temperature and humidity sensor (Input) | 14
-BH1750 | Light intensity sensor (Input) | 4 & 5 (I2C)
+[DHT11/DHT22](https://cdn-learn.adafruit.com/downloads/pdf/dht.pdf) | Temperature and humidity sensor (Input) | 14
+[BH1750](https://microcontrollerslab.com/bh1750-interfacing-with-arduino-measure-light/) | Light intensity sensor (Input) | 4 & 5 (I2C)
 Button | Input | 13
-RF Transmitter | Output | 2
+[RF Transmitter 433MHz](https://randomnerdtutorials.com/decode-and-send-433-mhz-rf-signals-with-arduino/) | KaKu Compatible RF 433MHz (Output) | 2
 LED | Output | 12
 
 Example with D1 Mini:
