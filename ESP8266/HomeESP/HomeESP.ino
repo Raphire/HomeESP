@@ -86,7 +86,7 @@ bool ConnectedToBroker = false;
 bool Interupted = false;
 bool lightSensorConnected = false;
 bool LightState = false;
-bool* KakuState = false;
+bool* KakuState;
 float Temperature;
 float Humidity;
 float LightIntensity;
